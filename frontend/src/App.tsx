@@ -143,7 +143,18 @@ export const App: React.FC = () => {
           {snapshot && snapshot.total > 100 && <p>Directory displays the latest 100 of {snapshot.total} agreements.</p>}
           {pending && <p>Unresolved transaction: {pending} <button className="underline" onClick={() => void checkPending()}>Check existing receipt</button></p>}
         </div>
-        {snapshot && !loading && !loadError && <>
+        {loading && !snapshot && !loadError && (
+          <div aria-label="Loading verified contract state" className="space-y-6 animate-pulse">
+            <div className="h-32 rounded-2xl border border-slate-800 bg-slate-900/60" />
+            <div className="grid gap-5 md:grid-cols-3">
+              <div className="h-28 rounded-2xl border border-slate-800 bg-slate-900/60" />
+              <div className="h-28 rounded-2xl border border-slate-800 bg-slate-900/60" />
+              <div className="h-28 rounded-2xl border border-slate-800 bg-slate-900/60" />
+            </div>
+            <div className="h-56 rounded-2xl border border-slate-800 bg-slate-900/60" />
+          </div>
+        )}
+        {snapshot && !loadError && <>
         <Routes>
           <Route path="/" element={<DashboardPage agreements={agreements} accounting={snapshot.accounting} />} />
           <Route path="/create" element={<CreateAgreementPage onCreateAgreement={handleCreateAgreement} />} />
