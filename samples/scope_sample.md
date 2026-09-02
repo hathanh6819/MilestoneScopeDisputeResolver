@@ -1,0 +1,1 @@
+{"clauses":[{"id":"AUTH_SIGNATURE","text":"Verify the provider signature and reject invalid requests.","material":true},{"id":"REPLAY_PROTECTION","text":"Prevent duplicate processing for the same immutable event identity.","material":true}]}
