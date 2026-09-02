@@ -1,6 +1,10 @@
 # MilestoneScopeDisputeResolver
 
-Status: **local review complete; Studionet deployment and lifecycle proof pending**.
+Status: **deployed on Studionet; canonical GitHub dispute lifecycle verified**.
+
+- Frontend: https://milestonescopedisputeresolver.pages.dev/
+- Contract: https://explorer-studio.genlayer.com/address/0x97b4EE3464132f5f1E172E76e78A6B06827A9df2
+- On-chain evidence log: [docs/test-evidence-log.md](docs/test-evidence-log.md)
 
 This Intelligent Contract resolves milestone disputes against a frozen, machine-readable scope at an exact Git commit. It never accepts contributor-authored URLs, hashes, delivery notes or test claims as truth.
 
@@ -39,7 +43,7 @@ All accepted evidence, identities, policy and acquisition receipts are serialize
 
 The frontend uses `genlayer-js` 1.1.8 and a browser wallet. It has no mock records, fake wallet, random hash, demo transaction, local address override or substitute evidence digest.
 
-After deployment copy `frontend/.env.example` to `frontend/.env` and set:
+For a new deployment, copy `frontend/.env.example` to `frontend/.env` and set:
 
 ```text
 VITE_CONTRACT_ADDRESS=0x...
@@ -61,13 +65,8 @@ npm run build
 
 Current local results are recorded in [docs/test-evidence-log.md](docs/test-evidence-log.md). Mock-backed Python tests are labeled as such. SDK Direct Mode proves schema/runtime behavior and emitted transfer payloads, but it is not proof of activated child transfers or wallet balance changes on Studionet.
 
-## Deployment gate
+## Deployment verification
 
-Do not submit this project from local results alone. Required next steps:
+The deployed source matches the reviewed contract SHA-256, the production frontend is bound to that address, and agreement `2` completed the canonical GitHub acquisition, assessment, authorization and zero-value settlement path on Studionet. Exact revisions, transaction hashes, verdict, evidence digest and final state are recorded in [docs/test-evidence-log.md](docs/test-evidence-log.md).
 
-1. Verify source schema through Studionet and deploy this exact file.
-2. Set the deployed address in the frontend and rebuild.
-3. Run a full Studionet lifecycle with real canonical test repository resources.
-4. Verify every parent transaction is finalized and successful.
-5. Verify emitted transfer child transaction IDs, child receipts and before/after balances.
-6. Publish exact repository revision, contract address and Explorer transaction links.
+The zero-value lifecycle does not prove activated native-asset child transfers. Before representing nonzero custody as production-verified, separately verify child transaction IDs, child receipts, accounting and before/after balances on Studionet.

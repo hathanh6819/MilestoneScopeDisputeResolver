@@ -3,6 +3,7 @@
   "contract_file": "contracts/milestone_scope_dispute_resolver.py",
   "target_network": "studionet",
   "rpc_url": "https://studio.genlayer.com/api",
+  "frontend_url": "https://milestonescopedisputeresolver.pages.dev/",
   "deployed_address": "0x97b4EE3464132f5f1E172E76e78A6B06827A9df2",
   "deployment_tx_hash": "",
   "deployment_ready": false,
