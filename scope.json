@@ -1,0 +1,1 @@
+{"clauses":[{"id":"MSR-001","text":"The delivered source must define resolve_milestone_dispute(scope_item, delivered_item) and deterministically return SATISFIED only when the normalized delivered item exactly equals the normalized frozen scope item; otherwise it must return UNSATISFIED.","material":true}]}
