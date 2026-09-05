@@ -2,7 +2,7 @@
 
 This log deliberately separates test boundaries. No local test is represented as a Studionet transaction or real wallet transfer.
 
-## Protocol v3 pre-deployment verification
+## Protocol v4 pre-deployment verification
 
 - `python scripts/run_all_tests.py` runs mock and real-SDK suites in isolated
   interpreters, eliminating the previous `conftest.py` module collision.
@@ -15,8 +15,23 @@ This log deliberately separates test boundaries. No local test is represented as
 - `npm ci`, `npm test` and `npm run build` pass from the committed lockfile.
 - Frontend tests cover account changes, unauthorized/stale lifecycle state,
   expiry, unresolved evidence, replay and finalized receipt error handling.
-- A fresh v3 deployment and nonzero Studionet lifecycle are required before this
-  section can be described as on-chain v3 evidence.
+- A fresh v4 deployment and nonzero Studionet lifecycle are required before this
+  section can be described as on-chain v4 evidence.
+
+## Superseded v3 payable regression — 2026-09-05
+
+Contract `0xee34Ca9cCc3bdBAA86fF75214C97830658dF7aEf` matched the reviewed v3
+source and successfully completed a `0.01 GEN` agreement settlement. However,
+adversarial transaction
+[`0xf8862a387b7c699980a76ae960ff64ffc84007de3de826603993979b35e77344`](https://explorer-studio.genlayer.com/tx/0xf8862a387b7c699980a76ae960ff64ffc84007de3de826603993979b35e77344)
+proved that Studionet retained `0.005 GEN` even though validators agreed on
+`ERROR / INVALID_REPOSITORY_NAME`; contract accounting correctly remained
+unchanged, leaving an unaccounted balance. V3 is therefore explicitly superseded.
+
+V4 handles this runtime behavior directly: invalid value-bearing payable calls
+finish by returning the entire attached value to the sender and return ID `0`,
+without creating or funding an agreement. Direct Mode asserts the emitted refund
+amount and unchanged state/accounting for every requested validation class.
 
 ## Results
 

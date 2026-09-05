@@ -346,6 +346,19 @@ class MilestoneScopeDisputeResolver(gl.Contract):
 
         # Typed storage maps are initialized by the GenLayer SDK.
 
+    def _reject_payable(self, code: str) -> u256:
+        """Refund attached value before reporting an invalid payable request.
+
+        Studionet retains message.value when a payable call rolls back. Therefore
+        value-bearing validation failures complete with return value 0 after an
+        immediate refund; zero-value failures retain explicit UserError behavior.
+        """
+        attached = u256(gl.message.value)
+        if attached > u256(0):
+            _EoaRecipient(gl.message.sender_address).emit_transfer(value=attached)
+            return u256(0)
+        raise gl.vm.UserError(code)
+
     # --------------------------------------------------------------------------
     # 1. CREATE AGREEMENT (Payable by Client)
     # --------------------------------------------------------------------------
@@ -361,30 +374,30 @@ class MilestoneScopeDisputeResolver(gl.Contract):
     ) -> u256:
         repo_clean = repository.strip()
         if not _validate_repo_name(repo_clean):
-            raise gl.vm.UserError("INVALID_REPOSITORY_NAME")
+            return self._reject_payable("INVALID_REPOSITORY_NAME")
 
         scope_sha = scope_commit.strip().lower()
         if not _is_valid_hex_sha40(scope_sha):
-            raise gl.vm.UserError("INVALID_SCOPE_COMMIT_SHA")
+            return self._reject_payable("INVALID_SCOPE_COMMIT_SHA")
 
         path_clean = scope_path.strip()
         if not _valid_source_path(path_clean):
-            raise gl.vm.UserError("INVALID_SCOPE_PATH")
+            return self._reject_payable("INVALID_SCOPE_PATH")
 
         policy_clean = policy_text.strip()
         if not policy_clean or len(policy_clean) > 4000:
-            raise gl.vm.UserError("INVALID_POLICY_TEXT")
+            return self._reject_payable("INVALID_POLICY_TEXT")
 
         dl_secs = int(deadline_seconds)
         if dl_secs < MIN_DEADLINE_SECONDS or dl_secs > MAX_DEADLINE_SECONDS:
-            raise gl.vm.UserError("INVALID_DEADLINE_SECONDS")
+            return self._reject_payable("INVALID_DEADLINE_SECONDS")
 
         sender_str = str(gl.message.sender_address)
         arbitrator = str(fallback_arbitrator).strip().lower()
         if (len(arbitrator) != 42 or not arbitrator.startswith("0x")
                 or any(c not in "0123456789abcdef" for c in arbitrator[2:])
                 or arbitrator == ZERO_ADDRESS or arbitrator == sender_str.lower()):
-            raise gl.vm.UserError("INVALID_FALLBACK_ARBITRATOR")
+            return self._reject_payable("INVALID_FALLBACK_ARBITRATOR")
 
         # Read/accept attached value only after every fallible input check above.
         deposit = u256(gl.message.value)
@@ -459,7 +472,7 @@ class MilestoneScopeDisputeResolver(gl.Contract):
     @gl.public.write.payable
     def fund_agreement(self, agreement_id: u256) -> u256:
         if agreement_id <= u256(0) or agreement_id > self.agreement_count:
-            raise gl.vm.UserError("INVALID_AGREEMENT_ID")
+            return self._reject_payable("INVALID_AGREEMENT_ID")
 
         deposit = u256(gl.message.value)
         if deposit <= u256(0):
@@ -467,11 +480,11 @@ class MilestoneScopeDisputeResolver(gl.Contract):
 
         st = int(self.agreement_state[agreement_id])
         if st not in (STATE_AWAITING_ACCEPTANCE, STATE_ACTIVE):
-            raise gl.vm.UserError("INVALID_LIFECYCLE_STATE")
+            return self._reject_payable("INVALID_LIFECYCLE_STATE")
 
         sender_str = str(gl.message.sender_address)
         if sender_str.lower() != self.agreement_client[agreement_id].lower():
-            raise gl.vm.UserError("ONLY_CLIENT_CAN_FUND")
+            return self._reject_payable("ONLY_CLIENT_CAN_FUND")
 
         self.agreement_deposit_wei[agreement_id] = self.agreement_deposit_wei[agreement_id] + deposit
         self.total_deposited_wei = self.total_deposited_wei + deposit
@@ -939,7 +952,7 @@ class MilestoneScopeDisputeResolver(gl.Contract):
     # --------------------------------------------------------------------------
     @gl.public.view
     def get_protocol(self) -> dict:
-        return {"name": "MilestoneScopeDisputeResolver", "version": 3,
+        return {"name": "MilestoneScopeDisputeResolver", "version": 4,
                 "max_files_per_tree": 8, "max_source_bytes": MAX_SOURCE_BYTES,
                 "max_total_bytes": MAX_TOTAL_EVIDENCE_BYTES,
                 "fallback_wait_seconds": FALLBACK_WAIT_SECONDS}

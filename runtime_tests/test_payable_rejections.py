@@ -19,11 +19,13 @@ def deploy(direct_deploy):
 def test_invalid_creation_never_changes_custody(direct_deploy, direct_vm, repo, commit, path, policy, deadline, arbitrator):
     c = deploy(direct_deploy)
     before = c.get_accounting()
+    refunds = []
+    direct_vm._gl_call_hook = lambda vm, request: refunds.append(request["EthSend"]) or {"ok": None} if "EthSend" in request else None
     direct_vm.value = 101
-    with pytest.raises(Exception):
-        c.create_agreement(repo, commit, path, policy, deadline, arbitrator)
+    assert c.create_agreement(repo, commit, path, policy, deadline, arbitrator) == 0
     assert c.get_counts()["agreement_count"] == 0
     assert c.get_accounting() == before
+    assert len(refunds) == 1 and int(refunds[0]["value"]) == 101
 
 
 def test_invalid_funding_preserves_reserve_and_deposit(direct_deploy, direct_vm, direct_bob):
@@ -32,8 +34,7 @@ def test_invalid_funding_preserves_reserve_and_deposit(direct_deploy, direct_vm,
     before_agreement, before_accounting = c.get_agreement(aid), c.get_accounting()
     direct_vm.value = 101
     with direct_vm.prank(direct_bob):
-        with pytest.raises(Exception, match="ONLY_CLIENT_CAN_FUND"):
-            c.fund_agreement(aid)
+        assert c.fund_agreement(aid) == 0
     assert c.get_agreement(aid) == before_agreement
     assert c.get_accounting() == before_accounting
 
@@ -51,8 +52,7 @@ def test_unknown_agreement_with_value_preserves_accounting(direct_deploy, direct
     c = deploy(direct_deploy)
     before = c.get_accounting()
     direct_vm.value = 101
-    with pytest.raises(Exception, match="INVALID_AGREEMENT_ID"):
-        c.fund_agreement(999)
+    assert c.fund_agreement(999) == 0
     assert c.get_counts()["agreement_count"] == 0
     assert c.get_accounting() == before
 
@@ -66,7 +66,6 @@ def test_terminal_agreement_with_value_preserves_accounting(direct_deploy, direc
     c.cancel_expired_agreement(aid)
     before_agreement, before_accounting = c.get_agreement(aid), c.get_accounting()
     direct_vm.value = 77
-    with pytest.raises(Exception, match="INVALID_LIFECYCLE_STATE"):
-        c.fund_agreement(aid)
+    assert c.fund_agreement(aid) == 0
     assert c.get_agreement(aid) == before_agreement
     assert c.get_accounting() == before_accounting

@@ -87,8 +87,10 @@ def test_fund_agreement():
     
     # Non-client cannot fund
     MockGl.message.sender = MockAddress(WORKER_ADDR)
-    with pytest.raises(MockUserError, match="ONLY_CLIENT_CAN_FUND"):
-        c.fund_agreement(ag_id)
+    before = c.get_accounting()
+    assert c.fund_agreement(ag_id) == 0
+    assert c.get_accounting() == before
+    assert MockGl.transfers[-1]["value"] == 500000000000000000
 
 def test_submit_delivery():
     c = Contract()

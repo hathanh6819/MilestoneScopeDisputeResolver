@@ -56,7 +56,7 @@ export async function loadSnapshot(): Promise<Snapshot> {
     read<{ agreement_count: number }>('get_counts'),
     read<AccountingRecord>('get_accounting'),
   ]);
-  if (protocol.name !== 'MilestoneScopeDisputeResolver' || protocol.version !== 3) throw new Error('Wrong contract or incompatible deployment version');
+  if (protocol.name !== 'MilestoneScopeDisputeResolver' || protocol.version !== 4) throw new Error('Wrong contract or incompatible deployment version');
   if (!Number.isSafeInteger(counts.agreement_count) || counts.agreement_count < 0) throw new Error('Invalid agreement count');
   for (const key of ['total_deposited_wei', 'total_reserved_wei', 'total_paid_wei', 'total_refunded_wei'] as const) {
     if (!/^\d+$/.test(accounting[key])) throw new Error('Invalid accounting response');

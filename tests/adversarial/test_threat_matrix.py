@@ -104,8 +104,10 @@ def test_sequence_4_unauthorized_actor_sequence():
         
     # Unauthorized fund
     MockGl.message.value = 100
-    with pytest.raises(MockUserError):
-        c.fund_agreement(ag_id)
+    before = c.get_accounting()
+    assert c.fund_agreement(ag_id) == 0
+    assert c.get_accounting() == before
+    assert MockGl.transfers[-1]["value"] == 100
         
     # Unauthorized cancel
     with pytest.raises(MockUserError):

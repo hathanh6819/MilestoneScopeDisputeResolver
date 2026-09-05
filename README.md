@@ -1,10 +1,11 @@
 # MilestoneScopeDisputeResolver
 
-Protocol v3 validates repository, commit, path, policy, deadline, arbitrator,
+Protocol v4 validates repository, commit, path, policy, deadline, arbitrator,
 agreement, lifecycle and caller conditions before attached GEN is recorded as a
-deposit or reserve. Rejected payable calls roll back without changing agreement
-state or custody accounting. Real GenLayer Direct Mode regressions exercise these
-failure paths through the contract boundary.
+deposit or reserve. Because Studionet retains `message.value` on a reverted
+payable call, invalid value-bearing requests emit an immediate refund and return
+zero without changing state or custody accounting; zero-value invalid requests
+retain explicit errors. Real GenLayer Direct Mode regressions exercise both paths.
 
 Status: **deployed on Studionet; canonical GitHub dispute lifecycle verified**.
 
