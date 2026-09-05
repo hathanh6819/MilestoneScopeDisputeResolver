@@ -379,7 +379,6 @@ class MilestoneScopeDisputeResolver(gl.Contract):
         if dl_secs < MIN_DEADLINE_SECONDS or dl_secs > MAX_DEADLINE_SECONDS:
             raise gl.vm.UserError("INVALID_DEADLINE_SECONDS")
 
-        deposit = u256(gl.message.value)
         sender_str = str(gl.message.sender_address)
         arbitrator = str(fallback_arbitrator).strip().lower()
         if (len(arbitrator) != 42 or not arbitrator.startswith("0x")
@@ -387,6 +386,8 @@ class MilestoneScopeDisputeResolver(gl.Contract):
                 or arbitrator == ZERO_ADDRESS or arbitrator == sender_str.lower()):
             raise gl.vm.UserError("INVALID_FALLBACK_ARBITRATOR")
 
+        # Read/accept attached value only after every fallible input check above.
+        deposit = u256(gl.message.value)
         now_ts = _transaction_timestamp()
         new_id = self.agreement_count + u256(1)
 
@@ -425,7 +426,6 @@ class MilestoneScopeDisputeResolver(gl.Contract):
         if deposit > u256(0):
             self.total_deposited_wei = self.total_deposited_wei + deposit
             self.total_reserved_wei = self.total_reserved_wei + deposit
-
         return new_id
 
     # --------------------------------------------------------------------------
@@ -939,7 +939,7 @@ class MilestoneScopeDisputeResolver(gl.Contract):
     # --------------------------------------------------------------------------
     @gl.public.view
     def get_protocol(self) -> dict:
-        return {"name": "MilestoneScopeDisputeResolver", "version": 2,
+        return {"name": "MilestoneScopeDisputeResolver", "version": 3,
                 "max_files_per_tree": 8, "max_source_bytes": MAX_SOURCE_BYTES,
                 "max_total_bytes": MAX_TOTAL_EVIDENCE_BYTES,
                 "fallback_wait_seconds": FALLBACK_WAIT_SECONDS}

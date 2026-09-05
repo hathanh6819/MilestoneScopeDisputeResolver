@@ -1,5 +1,11 @@
 # MilestoneScopeDisputeResolver
 
+Protocol v3 validates repository, commit, path, policy, deadline, arbitrator,
+agreement, lifecycle and caller conditions before attached GEN is recorded as a
+deposit or reserve. Rejected payable calls roll back without changing agreement
+state or custody accounting. Real GenLayer Direct Mode regressions exercise these
+failure paths through the contract boundary.
+
 Status: **deployed on Studionet; canonical GitHub dispute lifecycle verified**.
 
 - Frontend: https://milestonescopedisputeresolver.pages.dev/
@@ -7,6 +13,9 @@ Status: **deployed on Studionet; canonical GitHub dispute lifecycle verified**.
 - On-chain evidence log: [docs/test-evidence-log.md](docs/test-evidence-log.md)
 
 This Intelligent Contract resolves milestone disputes against a frozen, machine-readable scope at an exact Git commit. It never accepts contributor-authored URLs, hashes, delivery notes or test claims as truth.
+
+Run every Python suite with `python scripts/run_all_tests.py`. From `frontend/`,
+run `npm ci`, `npm test`, and `npm run build`.
 
 ## Evidence and decision model
 

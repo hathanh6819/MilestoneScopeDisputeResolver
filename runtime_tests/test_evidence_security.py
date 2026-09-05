@@ -1,7 +1,7 @@
 import json
 import re
 import pytest
-from test_runtime import prepare, evidence_responses
+from runtime_tests.test_runtime import prepare, evidence_responses
 
 CLAUSES = [{"id": "C1", "text": "Implement validation", "material": True}]
 

@@ -1,5 +1,5 @@
 import pytest
-from conftest import (
+from tests.conftest import (
     MockGl, MockUserError, MockAddress,
     CLIENT_ADDR, WORKER_ADDR, REPO_NAME, SCOPE_SHA, DELIVERY_SHA,
     SCOPE_PATH, DELIVERY_PATH, POLICY_TEXT

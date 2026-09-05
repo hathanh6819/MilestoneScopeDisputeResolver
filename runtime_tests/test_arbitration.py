@@ -1,5 +1,5 @@
 import pytest
-from test_runtime import prepare
+from runtime_tests.test_runtime import prepare
 
 ARBITRATOR = "0x4444444444444444444444444444444444444444"
 

@@ -1,5 +1,5 @@
 import pytest
-from conftest import (
+from tests.conftest import (
     MockGl, MockUserError, MockAddress,
     CLIENT_ADDR, WORKER_ADDR, OTHER_ADDR,
     REPO_NAME, SCOPE_SHA, DELIVERY_SHA, SCOPE_PATH, DELIVERY_PATH, POLICY_TEXT
@@ -15,7 +15,6 @@ def test_create_agreement_success():
     c = Contract()
     MockGl.message.sender = MockAddress(CLIENT_ADDR)
     MockGl.message.value = 1000000000000000000  # 1.0 GEN
-    
     ag_id = c.create_agreement(
         repository=REPO_NAME,
         scope_commit=SCOPE_SHA,

@@ -2,6 +2,22 @@
 
 This log deliberately separates test boundaries. No local test is represented as a Studionet transaction or real wallet transfer.
 
+## Protocol v3 pre-deployment verification
+
+- `python scripts/run_all_tests.py` runs mock and real-SDK suites in isolated
+  interpreters, eliminating the previous `conftest.py` module collision.
+- Direct Mode payable regressions cover invalid repository, commit, path, policy,
+  deadline and arbitrator; unknown agreement; zero value; unauthorized funder;
+  and terminal lifecycle funding. Every rejected call preserves state and custody
+  accounting.
+- Runtime custody tests inspect SDK `EthSend` requests, exact worker/client splits,
+  reserve depletion, cumulative paid/refunded totals and replay blocking.
+- `npm ci`, `npm test` and `npm run build` pass from the committed lockfile.
+- Frontend tests cover account changes, unauthorized/stale lifecycle state,
+  expiry, unresolved evidence, replay and finalized receipt error handling.
+- A fresh v3 deployment and nonzero Studionet lifecycle are required before this
+  section can be described as on-chain v3 evidence.
+
 ## Results
 
 | Boundary | Command | Result | What it establishes |

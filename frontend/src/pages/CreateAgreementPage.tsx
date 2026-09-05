@@ -177,23 +177,10 @@ export const CreateAgreementPage: React.FC<CreateAgreementPageProps> = ({ onCrea
           {/* Deposit & Deadline */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                <Coins className="w-3.5 h-3.5 text-sky-400" />
-                Initial Escrow Deposit (GEN)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                value={depositGen}
-                onChange={(e) => setDepositGen(e.target.value)}
-                placeholder="2.5"
-                required
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-emerald-400 font-bold font-mono focus:border-sky-500 focus:outline-none"
-              />
-              <p className="text-[11px] text-slate-500 mt-1">Sent as payable message.value with contract creation.</p>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5"><Coins className="w-3.5 h-3.5 text-sky-400" />Initial Escrow Deposit (GEN)</label>
+              <input type="number" step="0.01" min="0" value={depositGen} onChange={(e) => setDepositGen(e.target.value)} placeholder="2.5" required className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-emerald-400 font-bold font-mono focus:border-sky-500 focus:outline-none" />
+              <p className="text-[11px] text-slate-500 mt-1">All repository, commit, path, policy, deadline and arbitrator checks run before this value is reserved.</p>
             </div>
-
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-amber-400" />

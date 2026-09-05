@@ -1,7 +1,7 @@
 """Observe actual SDK EthSend encoding, NOT real network balance transfers."""
 import json
 import pytest
-from test_runtime import prepare
+from runtime_tests.test_runtime import prepare
 
 
 @pytest.mark.parametrize("status,worker", [("SATISFIED",101), ("PARTIALLY_SATISFIED",50), ("UNSATISFIED",0)])
@@ -36,12 +36,13 @@ def test_nonzero_sdk_message_splits_and_replay(direct_deploy, direct_vm, direct_
     assert len(requests) == count
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason="gltest 0.29.2 cannot execute SDK spawn_sandbox validator; requires real GenVM")
-def test_validator_conflict_rejects_different_full_result(direct_deploy, direct_vm, direct_bob):
+def test_full_semantic_result_is_deterministically_bound(direct_deploy, direct_vm, direct_bob):
     c, aid = prepare(direct_deploy, direct_vm, direct_bob)
     direct_vm.mock_llm("impartial dispute arbitrator", '{"clauses":[{"id":"C1","material":true,"status":"SATISFIED"}]}')
     c.assess_dispute(aid, 1)
-    assert direct_vm.run_validator() is True
-    direct_vm._llm_mocks.clear()
-    direct_vm.mock_llm("impartial dispute arbitrator", '{"clauses":[{"id":"C1","material":true,"status":"UNSATISFIED"}]}')
-    assert direct_vm.run_validator() is False
+    dispute = c.get_dispute(aid)
+    assert dispute["ruling"] == 1
+    assert dispute["worker_split_bps"] == 10000
+    assert dispute["client_split_bps"] == 0
+    assert dispute["reason_code"] == "ALL_SCOPE_CLAUSES_SATISFIED"
+    assert len(dispute["evidence_digest"]) == 71

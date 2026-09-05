@@ -1,6 +1,6 @@
 import pytest
 import milestone_scope_dispute_resolver as module
-from conftest import (
+from tests.conftest import (
     MockGl, MockAddress, MockUserError, MockWebResponse, CLIENT_ADDR, WORKER_ADDR,
     REPO_NAME, SCOPE_SHA, DELIVERY_SHA, SCOPE_PATH, DELIVERY_PATH, POLICY_TEXT,
 )
