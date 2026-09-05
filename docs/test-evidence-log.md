@@ -2,7 +2,7 @@
 
 This log deliberately separates test boundaries. No local test is represented as a Studionet transaction or real wallet transfer.
 
-## Protocol v4 pre-deployment verification
+## Protocol v4 verification
 
 - `python scripts/run_all_tests.py` runs mock and real-SDK suites in isolated
   interpreters, eliminating the previous `conftest.py` module collision.
@@ -15,8 +15,37 @@ This log deliberately separates test boundaries. No local test is represented as
 - `npm ci`, `npm test` and `npm run build` pass from the committed lockfile.
 - Frontend tests cover account changes, unauthorized/stale lifecycle state,
   expiry, unresolved evidence, replay and finalized receipt error handling.
-- A fresh v4 deployment and nonzero Studionet lifecycle are required before this
-  section can be described as on-chain v4 evidence.
+- The exact v4 source is deployed and the nonzero Studionet evidence is recorded
+  below.
+
+## Verified v4 deployment and adversarial custody evidence — 2026-09-05
+
+Contract: [`0x8A2A62b6343627A0f2DDc4709aaaBe5303A4006f`](https://explorer-studio.genlayer.com/address/0x8A2A62b6343627A0f2DDc4709aaaBe5303A4006f)
+
+- Deployed source SHA-256: `97f8adafe6b62b96220fa122320548f3bbdaf20fea9f05179ccc6d29d122d8c3`
+- Source size: `49,064` bytes; protocol version `4`; schema: `20` methods.
+- Initial state: `0` agreements, `0` disputes, zero contract balance and zero accounting.
+
+Invalid payable creation attached `0.005 GEN`:
+
+- Parent: [`0xc5575885f9684bef38b4e56f7f80b08479f1517745813ce43f62795f3efcbe9f`](https://explorer-studio.genlayer.com/tx/0xc5575885f9684bef38b4e56f7f80b08479f1517745813ce43f62795f3efcbe9f), finalized `SUCCESS` with no agreement created.
+- Refund child: [`0x029bd2471494284b13395a55669188bcd7c934d9c75e457afe86077d90e33ac1`](https://explorer-studio.genlayer.com/tx/0x029bd2471494284b13395a55669188bcd7c934d9c75e457afe86077d90e33ac1), finalized.
+- Client balance was `663906000000000000000` wei before and after; contract balance remained `0`; counts and all accounting fields remained zero.
+
+Valid `0.01 GEN` agreement `1`:
+
+1. [`create_agreement`](https://explorer-studio.genlayer.com/tx/0x7cc55e2fac594e8ca39642d90138904a4486b320a3f6957544da5f4744d1ac02)
+2. [`accept_agreement`](https://explorer-studio.genlayer.com/tx/0xe8609de8e487a356c148a1a57a104c7093ca60a66fdee0ae0f0269dece715c88)
+3. [`submit_delivery`](https://explorer-studio.genlayer.com/tx/0x1217397f31c642a1c75174755e26eed6a6156eb7a1fb2d1f41dbe054cc6c3f2e)
+4. [`accept_delivery`](https://explorer-studio.genlayer.com/tx/0x7bf132ce3e6150dec44d9d6e7fc474e5bee1c352e57ac27f9d77dc0462f8bf94)
+5. [Worker transfer child](https://explorer-studio.genlayer.com/tx/0xf67346e257d8d61d49c3ff7c40c6b26c8c86d057f4531eb703062b48ec168be2)
+
+All parents and the transfer finalized. Client decreased exactly `0.01 GEN`, worker increased exactly `0.01 GEN`, contract returned to `0`; accounting is deposited `0.01`, paid `0.01`, reserved `0`, refunded `0`. Agreement state is `9`, deposit is `0`, decision origin is `CLIENT_ACCEPTANCE`, authorization/consumption are `1/1`, and worker split is `10000` bps.
+
+Terminal funding and replay regressions:
+
+- Attached `0.005 GEN` to terminal `fund_agreement`: [parent](https://explorer-studio.genlayer.com/tx/0x300107d9d7a275b9a31cacae8d9a10e81c1dcb69abe2c8b8ffa4225dceb42168), [refund child](https://explorer-studio.genlayer.com/tx/0xfa616ce11d1170ea4823a72acaebcf2a9334226ed07aec85bf346750da7a59b7). Both finalized; worker and contract balances plus accounting remained unchanged.
+- Replayed `accept_delivery`: [`0x0280ac986d87489e20d309c134f69cf339ca37839b2abdaa3e171482ba100c5d`](https://explorer-studio.genlayer.com/tx/0x0280ac986d87489e20d309c134f69cf339ca37839b2abdaa3e171482ba100c5d), finalized `ERROR`; terminal state, all balances and accounting remained unchanged.
 
 ## Superseded v3 payable regression — 2026-09-05
 
@@ -38,7 +67,7 @@ amount and unchanged state/accounting for every requested validation class.
 | Boundary | Command | Result | What it establishes |
 |---|---|---:|---|
 | Python mock regression | `pytest tests -q -p no:cacheprovider` | 50 passed | Fast state-machine and regression checks using the explicitly fake module in `tests/conftest.py`. |
-| SDK Direct Mode | `pytest runtime_tests -q -p no:cacheprovider` | 40 passed, 1 strict expected failure | Real installed SDK contract loading/storage and mocked external web/LLM boundaries. |
+| SDK Direct Mode | `pytest runtime_tests -q -p no:cacheprovider` | 51 passed | Real installed SDK contract loading/storage and mocked external web/LLM boundaries. |
 | GenVM lint/schema | `genvm-lint check contracts/milestone_scope_dispute_resolver.py` | passed | 2 lint checks; schema validation found 20 methods (8 view, 12 write). |
 | Frontend type/build | `npm run build` | passed | TypeScript and Vite production bundle. |
 | Dependency audit | `npm audit` | 0 vulnerabilities | Registry audit after Vite and router upgrades. |
@@ -57,7 +86,7 @@ The isolated suite covers:
 - fallback arbitrator authority, waiting period, stale revision, invalid ruling and terminal overwrite prevention;
 - nonzero emitted EVM transfer payloads for 100/0, 50/50 and 0/100, odd-value conservation and replay prevention.
 
-The installed gltest 0.29.2 Direct Mode cannot execute its SDK `spawn_sandbox` validator replay on this environment (`unknown type 14`). That one test is a strict expected failure and must be replaced by a real multi-validator Studionet lifecycle after deployment. Direct Mode observes `EthSend` payloads; it does not activate their child transactions or prove recipient balance changes.
+Direct Mode observes `EthSend` payloads and exact custody invariants. The v4 Studionet evidence above separately proves that the emitted child transfers finalize and produce the expected recipient/contract balance changes.
 
 ## Remaining external proof
 

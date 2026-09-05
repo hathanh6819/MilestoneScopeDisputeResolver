@@ -10,7 +10,7 @@ retain explicit errors. Real GenLayer Direct Mode regressions exercise both path
 Status: **deployed on Studionet; canonical GitHub dispute lifecycle verified**.
 
 - Frontend: https://milestonescopedisputeresolver.pages.dev/
-- Contract: https://explorer-studio.genlayer.com/address/0x97b4EE3464132f5f1E172E76e78A6B06827A9df2
+- Contract: https://explorer-studio.genlayer.com/address/0x8A2A62b6343627A0f2DDc4709aaaBe5303A4006f
 - On-chain evidence log: [docs/test-evidence-log.md](docs/test-evidence-log.md)
 
 This Intelligent Contract resolves milestone disputes against a frozen, machine-readable scope at an exact Git commit. It never accepts contributor-authored URLs, hashes, delivery notes or test claims as truth.
@@ -77,6 +77,4 @@ Current local results are recorded in [docs/test-evidence-log.md](docs/test-evid
 
 ## Deployment verification
 
-The deployed source matches the reviewed contract SHA-256, the production frontend is bound to that address, and agreement `2` completed the canonical GitHub acquisition, assessment, authorization and zero-value settlement path on Studionet. Exact revisions, transaction hashes, verdict, evidence digest and final state are recorded in [docs/test-evidence-log.md](docs/test-evidence-log.md).
-
-The zero-value lifecycle does not prove activated native-asset child transfers. Before representing nonzero custody as production-verified, separately verify child transaction IDs, child receipts, accounting and before/after balances on Studionet.
+The v4 deployed source matches SHA-256 `97f8adafe6b62b96220fa122320548f3bbdaf20fea9f05179ccc6d29d122d8c3`, and the production frontend is bound to that address. Agreement `1` completed a nonzero `0.01 GEN` lifecycle and finalized its worker transfer. Separate invalid-create and invalid-fund transactions returned attached value through finalized child transfers while preserving state and accounting; a replay finalized with an error and no mutation. Exact transaction hashes and before/after balances are recorded in [docs/test-evidence-log.md](docs/test-evidence-log.md).
